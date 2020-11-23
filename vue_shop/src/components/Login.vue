@@ -58,7 +58,9 @@ export default {
         const result = await this.$http.post('login', this.loginForm)
         if (result.data.data !== null) {
           console.log(result)
-          return this.$message.success('登陆成功')
+          this.$message.success('登陆成功')
+          window.sessionStorage.setItem('token', result.data.data.token)
+          this.$router.push('/home')
         } else {
           return this.$message.error('登陆失败')
         }
