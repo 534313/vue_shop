@@ -4,9 +4,17 @@ import Login from '../components/Login.vue'
 import '../assets/css/global.css'
 import '../icon/iconfont.css'
 import Home from '../components/Home.vue'
-
+import Welcome from '../components/Welcome.vue'
 import axios from 'axios'
-axios.defaults.baseURL = 'http://timemeetyou.com:8889/api/private/v1/'
+import Users from '../components/user/Users.vue'
+import Goods from '../components/good/Goods.vue'
+//  axios.defaults.baseURL = 'http://www.ysqorz.top:8888/api/private/v1/'
+axios.defaults.baseURL = 'http://localhost:8080/ssm_all_war/'
+axios.interceptors.request.use(config => {
+  console.log(config)
+  config.headers.Authorization = window.sessionStorage.getItem('token')
+  return config
+})
 Vue.prototype.$http = axios
 Vue.use(VueRouter)
 
@@ -18,7 +26,20 @@ const routes = [
     path: '/login', component: Login
   },
   {
-    path: '/home', component: Home
+    path: '/home',
+    component: Home,
+    redirect: '/welcome',
+    children: [
+      {
+        path: '/welcome', component: Welcome
+      },
+      {
+        path: '/users', component: Users
+      },
+      {
+        path: '/goods', component: Goods
+      }
+    ]
   }
 ]
 

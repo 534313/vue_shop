@@ -3,7 +3,7 @@
         <div class="login_box">
             <!--logo-->
             <div class="avatar_box">
-                <img src="../assets/logo.png" alt="">
+                <img src="../image/购物车.png" alt="">
             </div>
             <!--登录区-->
             <el-form ref="LoginFormRef" :model="loginForm" class="login_form" :rules="loginRules">
@@ -18,7 +18,7 @@
                 <!-- 按钮form -->
                 <el-form-item >
                     <!-- 登录按钮 -->
-                    <el-button type="primary" class="btnl" @click="login">登录</el-button>
+                    <el-button type="primary" class="btnl" @click="login" keyup.enter="login">登录</el-button>
                     <!-- 重置 -->
                     <el-button type="info" class="btnr" @click="resetForm">重置</el-button>
                 </el-form-item>
@@ -32,8 +32,8 @@ export default {
   data () {
     return {
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
 
       loginRules: {
@@ -55,13 +55,14 @@ export default {
     login () {
       this.$refs.LoginFormRef.validate(async valid => {
         if (!valid) return
-        const result = await this.$http.post('login', this.loginForm)
+        const result = await this.$http.post('user/login', this.loginForm)
         if (result.data.data !== null) {
           console.log(result)
           this.$message.success('登陆成功')
           window.sessionStorage.setItem('token', result.data.data.token)
           this.$router.push('/home')
         } else {
+          console.log(result)
           return this.$message.error('登陆失败')
         }
       })
