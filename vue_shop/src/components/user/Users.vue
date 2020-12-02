@@ -178,9 +178,54 @@
               <el-button
                 type="warning"
                 icon="el-icon-setting"
+                @click="openSetDialog(scope.row)"
                 circle
               ></el-button>
             </el-tooltip>
+            <!-- 分配角色表单 -->
+            <el-dialog
+              title="分配角色"
+              :visible.sync="setRoleDialogVisible"
+              @close="RoledialogClosed"
+              width="30%"
+            >
+              <!-- <div>
+                <span>用户名:</span><span>{{ roleInfo.username }}</span>
+              </div>
+              <div>
+                <span>当前角色:</span><span>{{ roleInfo.role_name }}</span>
+              </div> -->
+              <table>
+                <tr>
+                  <td>用户名:</td>
+                  <td>{{ roleInfo.username }}</td>
+                </tr>
+                <tr>
+                  <td>当前角色:</td>
+                  <td>{{ roleInfo.role_name }}</td>
+                </tr>
+                <tr>
+                  <td>新角色:</td>
+                  <td>
+                    <el-select v-model="newRoleId" placeholder="请选择">
+                      <el-option
+                        v-for="item in roleList"
+                        :key="item.id"
+                        :label="item.roleName"
+                        :value="item.id"
+                      >
+                      </el-option>
+                    </el-select>
+                  </td>
+                </tr>
+              </table>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="setRoleDialogVisible = false"
+                  >取 消</el-button
+                >
+                <el-button type="primary" @click="setRole">确 定</el-button>
+              </div>
+            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -208,11 +253,13 @@ export default {
       total: 0,
       dialogFormVisible: false,
       updateDialogVisible: false,
+      setRoleDialogVisible: false,
       addform: {
         username: '',
         password: '',
         mobile: '',
         email: '',
+        newRole: '',
       },
       updateform: {
         id: 0,
@@ -228,6 +275,9 @@ export default {
         pagenum: 1,
         pagesize: 3,
       },
+      roleList: [],
+      roleInfo: {},
+      newRoleId: '',
       FormRules: {
         username: { required: true, message: '请输入用户名', trigger: 'blur' },
         password: { required: true, message: '请输入密码', trigger: 'blur' },
@@ -352,6 +402,31 @@ export default {
           })
         })
     },
+    async openSetDialog(roleInfo) {
+      this.roleInfo = roleInfo
+      this.setRoleDialogVisible = true
+      const { data: res } = await this.$http.get('role/getRoles')
+      this.roleList = res.data
+    },
+    RoledialogClosed() {
+      this.newRoleId = ''
+      this.setRoleDialogVisible = false
+      this.getUserList()
+    },
+    async setRole() {
+      if (!this.newRoleId) {
+        return this.$message.error('请选择新角色')
+      }
+      console.log(this.newRoleId)
+      console.log(this.roleInfo.id)
+      const { data: res } = await this.$http.put('user/setRole', {
+        role_id: this.newRoleId,
+        user_id: this.roleInfo.id,
+      })
+      this.setRoleDialogVisible = false
+      this.$message.success('分配角色成功')
+      console.log(res)
+    },
   },
 }
 </script>
@@ -371,5 +446,17 @@ export default {
 }
 .el-pagination {
   margin-top: 15px;
+}
+span {
+  margin-right: 15px;
+  margin-bottom: 10px;
+}
+td {
+  line-height: 50px;
+  text-align: center !important;
+}
+.el-select {
+  text-align: center !important;
+  text-align-last: center !important;
 }
 </style>

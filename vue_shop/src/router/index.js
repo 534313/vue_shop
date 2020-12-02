@@ -8,6 +8,9 @@ import Welcome from '../components/Welcome.vue'
 import axios from 'axios'
 import Users from '../components/user/Users.vue'
 import Goods from '../components/good/Goods.vue'
+import Rights from '../components/power/Rights.vue'
+import Roles from '../components/power/Roles.vue'
+import RoleTree from '../components/power/RoleTree.vue'
 //  axios.defaults.baseURL = 'http://www.ysqorz.top:8888/api/private/v1/'
 axios.defaults.baseURL = 'http://localhost:8080/ssm_all_war/'
 axios.interceptors.request.use(config => {
@@ -38,6 +41,15 @@ const routes = [
       },
       {
         path: '/goods', component: Goods
+      },
+      {
+        path: '/rights', component: Rights
+      },
+      {
+        path: '/roles', component: Roles
+      },
+      {
+        path: '/roletree', component: RoleTree
       }
     ]
   }
